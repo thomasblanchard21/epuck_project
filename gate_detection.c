@@ -9,7 +9,6 @@
 #include <motors.h>
 #include <gate_detection.h>
 #include <leds.h>
-//#include <sensors/VL53L0X/VL53L0X.h>
 #include <sensors/proximity.h>
 
 static THD_WORKING_AREA(waGateDetection, 256);
@@ -37,20 +36,23 @@ static THD_FUNCTION(GateDetection, arg) {
         if ((get_calibrated_prox(2) > 0) && (get_calibrated_prox(5) > 0)) {
         	++nb_leds;
 
-            switch(nb_leds%5) {
+            switch(nb_leds%6) {
             		case 0:
-            			set_led(0,1);
+            			clear_leds();
             			break;
             		case 1:
+            			set_led(0,1);
+            			break;
+            		case 2:
             		    set_led(1,1);
             		    break;
-            		case 2:
+            		case 3:
             			set_led(2,1);
             			break;
-            		case 3:
+            		case 4:
             		    set_led(3,1);
             		    break;
-            		case 4:
+            		case 5:
             		    for(int i=0; i<11; i++) {
             		    	for(int j=0; j<4; j++) {
             		    		set_led(j,2);
@@ -61,9 +63,6 @@ static THD_FUNCTION(GateDetection, arg) {
             		default:
             			clear_leds();
             }
-
-            if (nb_leds==0)
-            	clear_leds();
 
         	chThdSleepMilliseconds(2000);
         }

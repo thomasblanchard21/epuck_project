@@ -76,6 +76,7 @@ void refresh_position(imu_msg_t *imu_values){
 
 //    chSysUnlock();
 
+    //led
 }
 
 int main(void)
@@ -113,12 +114,7 @@ int main(void)
     /* Infinite loop. */
     while (1) {
 
-    	//wait for new measures to be published
-        messagebus_topic_wait(imu_topic, &imu_values, sizeof(imu_values));
 
-        refresh_position(&imu_values);
-    	//waits 1 second
-        chThdSleepMilliseconds(10);
     }
 }
 
