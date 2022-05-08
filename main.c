@@ -3,9 +3,9 @@
 #include <string.h>
 #include <math.h>
 
-#include "ch.h"
-#include "hal.h"
-#include "memory_protection.h"
+#include <ch.h>
+#include <hal.h>
+#include <memory_protection.h>
 #include <usbcfg.h>
 #include <main.h>
 #include <motors.h>
@@ -43,41 +43,6 @@ static void serial_start(void)
 	sdStart(&SD3, &ser_cfg); // UART3.
 }
 
-void refresh_position(imu_msg_t *imu_values){
-
-
-    //threshold value to not use the leds when the robot is too horizontal
-    float threshold = 2.0;
-    //create a pointer to the array for shorter name
-    float *accel = imu_values->acceleration;
-
-    float speed = 1000;
-
-//    chSysLock();
-
-    if(accel[X_AXIS] > threshold) {
-    	left_motor_set_speed(-speed);
-    	right_motor_set_speed(speed);
-    } else if(accel[X_AXIS] < -threshold) {
-    	left_motor_set_speed(speed);
-    	right_motor_set_speed(-speed);
-    } else if(accel[Y_AXIS] > threshold) {
-    	left_motor_set_speed(-speed);
-    	right_motor_set_speed(speed);
-    } else if(accel[Y_AXIS] < -threshold) {
-    	left_motor_set_speed(speed);
-    	right_motor_set_speed(speed);
-    } else {
-    	left_motor_set_speed(0);
-    	right_motor_set_speed(0);
-    }
-
-    //phase a 0 ?
-
-//    chSysUnlock();
-
-    //led
-}
 
 int main(void)
 {
@@ -86,11 +51,11 @@ int main(void)
     chSysInit();
     mpu_init();
 
-    i2c_start();
-    imu_start();
-
     //Starts the serial communication
     serial_start();
+
+    i2c_start();
+    imu_start();
 
     /** Inits the Inter Process Communication bus. */
     messagebus_init(&bus, &bus_lock, &bus_condvar);

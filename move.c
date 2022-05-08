@@ -39,3 +39,39 @@ static THD_FUNCTION(Move, arg) {
 void move_start(void){
 	chThdCreateStatic(waMove, sizeof(waMove), NORMALPRIO, Move, NULL);
 }
+
+void refresh_position(imu_msg_t *imu_values){
+
+
+    //threshold value to not use the leds when the robot is too horizontal
+    float threshold = 2.0;
+    //create a pointer to the array for shorter name
+    float *accel = imu_values->acceleration;
+
+    float speed = 1000;
+
+//    chSysLock();
+
+    if(accel[X_AXIS] > threshold) {
+    	left_motor_set_speed(-speed);
+    	right_motor_set_speed(speed);
+    } else if(accel[X_AXIS] < -threshold) {
+    	left_motor_set_speed(speed);
+    	right_motor_set_speed(-speed);
+    } else if(accel[Y_AXIS] > threshold) {
+    	left_motor_set_speed(-speed);
+    	right_motor_set_speed(speed);
+    } else if(accel[Y_AXIS] < -threshold) {
+    	left_motor_set_speed(speed);
+    	right_motor_set_speed(speed);
+    } else {
+    	left_motor_set_speed(0);
+    	right_motor_set_speed(0);
+    }
+
+    //phase a 0 ?
+
+//    chSysUnlock();
+
+    //led
+}
