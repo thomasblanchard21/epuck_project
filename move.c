@@ -4,10 +4,11 @@
 #include <usbcfg.h>
 #include <chprintf.h>
 
+#include <main.h>
 #include <motors.h>
 #include <move.h>
 
-#include <imu.h>
+#include <sensors/imu.h>
 
 
 static THD_WORKING_AREA(waMove, 256);
@@ -16,8 +17,8 @@ static THD_FUNCTION(Move, arg) {
     chRegSetThreadName(__FUNCTION__);
     (void)arg;
 
-
-
+    messagebus_topic_t *imu_topic = messagebus_find_topic_blocking(&bus, "/imu");
+    imu_msg_t imu_values;
 
     systime_t time;
 

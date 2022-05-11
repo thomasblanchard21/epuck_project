@@ -17,6 +17,7 @@
 #include <sensors/imu.h>
 
 #include <gate_detection.h>
+#include <move.h>
 
 
 messagebus_t bus;
@@ -63,18 +64,17 @@ int main(void)
 	//inits the motors
 	motors_init();
 
-	//Inits the proximity sensors
+
+    //wait 2 sec to be sure the e-puck is in a stable position
+    chThdSleepMilliseconds(2000);
+    calibrate_acc();
 
 
 	//Inits the gate detection
 	gate_detection_start();
 
-    messagebus_topic_t *imu_topic = messagebus_find_topic_blocking(&bus, "/imu");
-    imu_msg_t imu_values;
-
-    //wait 2 sec to be sure the e-puck is in a stable position
-    chThdSleepMilliseconds(2000);
-    calibrate_acc();
+    //Inits movement
+	move_start();
 
     /* Infinite loop. */
     while (1) {
