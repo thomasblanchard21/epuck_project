@@ -18,7 +18,7 @@
 
 #include <gate_detection.h>
 #include <move.h>
-
+#include <leds.h>
 
 messagebus_t bus;
 MUTEX_DECL(bus_lock);

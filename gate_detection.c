@@ -26,8 +26,11 @@ static THD_FUNCTION(GateDetection, arg) {
     set_led(1,0);
 
 
+
+
     systime_t time;
 
+    static bool inDoor=1;
     static uint8_t nb_leds=0;
 
     while(1){
@@ -36,7 +39,13 @@ static THD_FUNCTION(GateDetection, arg) {
 
 
         if ((get_calibrated_prox(2) > 0) && (get_calibrated_prox(5) > 0)) {
-        	++nb_leds;
+        	if (inDoor==0) {
+        		++nb_leds;
+        	}
+    		inDoor=1;
+
+        	set_body_led(1);
+        	set_front_led(1);
 
             switch(nb_leds%6) {
             		case 0:
@@ -65,14 +74,23 @@ static THD_FUNCTION(GateDetection, arg) {
             		default:
             			clear_leds();
             }
+        } else {
+        	inDoor=0;
 
-        	chThdSleepMilliseconds(2000);
+        	set_body_led(0);
+    		set_front_led(0);
         }
-
-        //100Hz
-        chThdSleepUntilWindowed(time, time + MS2ST(10));
     }
+
+//    if (inDoor==1) {
+//
+//    } else {
+//    }
+
+    //100Hz
+    chThdSleepUntilWindowed(time, time + MS2ST(10));
 }
+
 
 void gate_detection_start(void){
 	chThdCreateStatic(waGateDetection, sizeof(waGateDetection), NORMALPRIO, GateDetection, NULL);
