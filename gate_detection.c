@@ -21,7 +21,9 @@ static THD_FUNCTION(GateDetection, arg) {
 
     calibrate_ir();
     //Attend un peu apres calibration
+    set_led(1,1);
     chThdSleepMilliseconds(2000);
+    set_led(1,0);
 
 
     systime_t time;

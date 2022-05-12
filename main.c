@@ -66,8 +66,10 @@ int main(void)
 
 
     //wait 2 sec to be sure the e-puck is in a stable position
+	set_led(0,1);
     chThdSleepMilliseconds(2000);
     calibrate_acc();
+	set_led(0,0);
 
 
 	//Inits the gate detection
