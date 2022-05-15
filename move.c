@@ -24,31 +24,37 @@ void refresh_position(imu_msg_t *imu_values){
     //Acceleration coefficient to correlate the speed of the robot to the tilt
     float acc_coeff = 500;
 
+    //if robot is tilted on the left, add rotational component to the speed
     if (accel[X_AXIS] > threshold_sup ) {
       	speed= abs(accel[X_AXIS]*acc_coeff);
       	speed_r += speed;
       	speed_l -= speed;
     }
+    //if robot is tilted on the right, add rotational component to the speed
     if(accel[X_AXIS] < -threshold_sup) {
       	speed=abs(accel[X_AXIS]*acc_coeff);
       	speed_r -= speed;
       	speed_l += speed;
     }
+    //if robot is tilted forward, add forward component to the speed
     if (accel[Y_AXIS] < -threshold_sup) {
         speed=abs(accel[Y_AXIS]*acc_coeff);
         speed_r += speed;
         speed_l += speed;
     }
+    //if robot is tilted backwards, add backward component to the speed
     if (accel[Y_AXIS] > threshold_sup) {
         speed=abs(accel[Y_AXIS]*acc_coeff);
         speed_r -= speed;
         speed_l -= speed;
     }
+    //if not tilted, stop the robot
     if ((abs(accel[X_AXIS]) < threshold_inf ) && (abs(accel[Y_AXIS]) < threshold_inf )) {
        	speed_r = 0;
        	speed_l = 0;
     }
 
+    //apply the sum of the speeds of the different tilt to each motor
     left_motor_set_speed(speed_l);
     right_motor_set_speed(speed_r);
 
