@@ -33,12 +33,19 @@ static THD_FUNCTION(GateDetection, arg) {
     static bool inDoor=1;
     static uint8_t nb_leds=0;
 
+    uint8_t calibration=0;
+    if (get_prox(2) > get_prox(5)) {
+    	calibration=get_prox(5);
+    } else {
+    	calibration=get_prox(2);
+    }
+
     while(1){
 
         time = chVTGetSystemTime();
 
 
-        if ((get_calibrated_prox(2) > 0) && (get_calibrated_prox(5) > 0)) {
+        if ((get_calibrated_prox(2)/calibration > 0) && (get_calibrated_prox(5)/calibration > 0)) {
         	if (inDoor==0) {
         		++nb_leds;
         	}

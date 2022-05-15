@@ -14,38 +14,49 @@ void refresh_position(imu_msg_t *imu_values){
 
 
     //threshold value to not use the leds when the robot is too horizontal
-    float threshold = 1;
-    float threshold_inf = 0.6;
-    float threshold_back = 0.4;
+    float threshold_sup = 1.2;
+    float threshold_inf = 1.0;
+    float threshold_back = 1.0;
+    float threshold_front = 0.7;
 
     //create a pointer to the array for shorter name
     float *accel = imu_values->acceleration;
 
-    float speed = 1000;
-    float acc_coeff = 1000;
+    float speed_r = 0;
+    float speed_l = 0;
+    float speed = 0;
+    float acc_coeff = 600;
+
 
  //   chSysLock();
 
-    if (accel[X_AXIS] > threshold ) {
-      	speed=abs((accel[X_AXIS]-threshold+1)*acc_coeff);
-       	left_motor_set_speed(-speed);
-       	right_motor_set_speed(speed);
-    } else if(accel[X_AXIS] < -threshold) {
-      	speed=abs((accel[X_AXIS]+threshold-1)*acc_coeff);
-       	left_motor_set_speed(speed);
-       	right_motor_set_speed(-speed);
-    } else if ( (accel[Y_AXIS] < -threshold) && (abs(accel[X_AXIS]) < threshold_inf) ) {
-          	speed=abs((accel[Y_AXIS]+threshold-1)*acc_coeff);
-         	left_motor_set_speed(speed);
-           	right_motor_set_speed(speed);
-    } else if ( (accel[Y_AXIS] > threshold) && (abs(accel[X_AXIS]) < threshold_back) ) {
-      	speed=abs((accel[Y_AXIS]-threshold+1)*acc_coeff);
-       	left_motor_set_speed(-speed);
-    	right_motor_set_speed(speed);
-    } else if ((abs(accel[X_AXIS]) < threshold_inf ) && (abs(accel[Y_AXIS]) < threshold_inf )) {
-       	left_motor_set_speed(0);
-       	right_motor_set_speed(0);
+    if (accel[X_AXIS] > threshold_sup ) {
+      	speed=abs(accel[X_AXIS]*acc_coeff);
+      	speed_r=speed_r+speed;
+      	speed_l=speed_l-speed;
     }
+    if(accel[X_AXIS] < -threshold_sup) {
+      	speed=abs(accel[X_AXIS]*acc_coeff);
+      	speed_r=speed_r-speed;
+      	speed_l=speed_l+speed;
+    }
+    if (accel[Y_AXIS] < -threshold_sup) {
+        speed=abs(accel[Y_AXIS]*acc_coeff);
+        speed_r=speed_r+speed;
+        speed_l=speed_l+speed;
+    }
+    if (accel[Y_AXIS] > threshold_sup) {
+        speed=abs(accel[Y_AXIS]*acc_coeff);
+        speed_r=speed_r-speed;
+        speed_l=speed_l-speed;
+    }
+    if ((abs(accel[X_AXIS]) < threshold_inf ) && (abs(accel[Y_AXIS]) < threshold_inf )) {
+       	speed_r=0;
+       	speed_l=0;
+    }
+
+    left_motor_set_speed(speed_l);
+    right_motor_set_speed(speed_r);
 
 //   chSysUnlock();
 }
