@@ -25,28 +25,28 @@ void refresh_position(imu_msg_t *imu_values){
     float acc_coeff = 500;
 
     if (accel[X_AXIS] > threshold_sup ) {
-      	speed=abs(accel[X_AXIS]*acc_coeff);
-      	speed_r=speed_r+speed;
-      	speed_l=speed_l-speed;
+      	speed= abs(accel[X_AXIS]*acc_coeff);
+      	speed_r += speed;
+      	speed_l -= speed;
     }
     if(accel[X_AXIS] < -threshold_sup) {
       	speed=abs(accel[X_AXIS]*acc_coeff);
-      	speed_r=speed_r-speed;
-      	speed_l=speed_l+speed;
+      	speed_r -= speed;
+      	speed_l += speed;
     }
     if (accel[Y_AXIS] < -threshold_sup) {
         speed=abs(accel[Y_AXIS]*acc_coeff);
-        speed_r=speed_r+speed;
-        speed_l=speed_l+speed;
+        speed_r += speed;
+        speed_l += speed;
     }
     if (accel[Y_AXIS] > threshold_sup) {
         speed=abs(accel[Y_AXIS]*acc_coeff);
-        speed_r=speed_r-speed;
-        speed_l=speed_l-speed;
+        speed_r -= speed;
+        speed_l -= speed;
     }
     if ((abs(accel[X_AXIS]) < threshold_inf ) && (abs(accel[Y_AXIS]) < threshold_inf )) {
-       	speed_r=0;
-       	speed_l=0;
+       	speed_r = 0;
+       	speed_l = 0;
     }
 
     left_motor_set_speed(speed_l);
