@@ -29,9 +29,6 @@ int main(void)
     chSysInit();
     mpu_init();
 
-    //Start the i2c communication
-    i2c_start();
-
     //Start the imu
     imu_start();
 
