@@ -18,6 +18,7 @@
 
 #include <gate_detection.h>
 #include <move.h>
+#include <spi_comm.h>
 #include <leds.h>
 
 messagebus_t bus;
@@ -63,13 +64,14 @@ int main(void)
 
 	//inits the motors
 	motors_init();
+	spi_comm_start();
 
 
     //wait 2 sec to be sure the e-puck is in a stable position
-	set_led(0,1);
+	set_body_led(1);
     chThdSleepMilliseconds(2000);
     calibrate_acc();
-	set_led(0,0);
+	set_body_led(0);
 
 
 	//Inits the gate detection

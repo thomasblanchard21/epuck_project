@@ -84,11 +84,11 @@ static THD_FUNCTION(Move, arg) {
         refresh_position(&imu_values);
 
         //100Hz
-        chThdSleepUntilWindowed(time, time + MS2ST(10));
+        chThdSleepUntilWindowed(time, time + MS2ST(20));
     }
 }
 
 void move_start(void){
-	chThdCreateStatic(waMove, sizeof(waMove), NORMALPRIO, Move, NULL);
+	chThdCreateStatic(waMove, sizeof(waMove), NORMALPRIO+2, Move, NULL);
 }
 

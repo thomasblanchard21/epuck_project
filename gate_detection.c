@@ -19,13 +19,13 @@ static THD_FUNCTION(GateDetection, arg) {
 
     proximity_start();
 
-    calibrate_ir();
-    //Attend un peu apres calibration
-//    set_led(1,1);
-//    chThdSleepMilliseconds(2000);
-//    set_led(1,0);
 
 
+
+    set_rgb_led(LED2,100,0,0);
+    set_rgb_led(1,100,0,0);
+    set_rgb_led(2,100,0,0);
+    set_rgb_led(3,100,0,0);
 
 
     systime_t time;
@@ -33,11 +33,40 @@ static THD_FUNCTION(GateDetection, arg) {
     static bool inDoor=1;
     static uint8_t nb_leds=0;
 
-    uint8_t calibration=0;
+
+    //Informe l'utilisateur que la calibration des capteurs est en cours
+
+     set_led(0,1);
+     chThdSleepMilliseconds(200);
+     set_rgb_led(LED2,100,0,0);
+     chThdSleepMilliseconds(200);
+     set_led(1,1);
+     chThdSleepMilliseconds(200);
+     set_rgb_led(LED4,100,0,0);
+     chThdSleepMilliseconds(200);
+     set_led(2,1);
+     chThdSleepMilliseconds(200);
+     set_rgb_led(LED6,100,0,0);
+     chThdSleepMilliseconds(200);
+     set_led(3,1);
+     chThdSleepMilliseconds(200);
+     set_rgb_led(LED8,100,0,0);
+     chThdSleepMilliseconds(200);
+
+    calibrate_ir();
+
+    uint16_t calibration=0;
     if (get_prox(2) > get_prox(5)) {
-    	calibration=get_prox(5);
-    } else {
     	calibration=get_prox(2);
+    } else {
+    	calibration=get_prox(5);
+    }
+
+    for (int i=0; i<4; ++i) {
+         set_led(i,0);
+         chThdSleepMilliseconds(200);
+         set_rgb_led(i,0,0,0);
+         chThdSleepMilliseconds(200);
     }
 
     while(1){
@@ -52,7 +81,6 @@ static THD_FUNCTION(GateDetection, arg) {
     		inDoor=1;
 
         	set_body_led(1);
-        	set_front_led(1);
 
             switch(nb_leds%6) {
             		case 0:
@@ -83,16 +111,9 @@ static THD_FUNCTION(GateDetection, arg) {
             }
         } else {
         	inDoor=0;
-
         	set_body_led(0);
-    		set_front_led(0);
         }
     }
-
-//    if (inDoor==1) {
-//
-//    } else {
-//    }
 
     //100Hz
     chThdSleepUntilWindowed(time, time + MS2ST(10));
