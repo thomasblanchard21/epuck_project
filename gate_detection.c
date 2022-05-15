@@ -2,7 +2,6 @@
 #include "hal.h"
 #include <usbcfg.h>
 #include <chprintf.h>
-#include <main.h>
 #include <motors.h>
 #include <spi_comm.h>
 #include <gate_detection.h>
