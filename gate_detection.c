@@ -18,16 +18,17 @@ static THD_FUNCTION(GateDetection, arg) {
     //Start the proximity sensors
     proximity_start();
 
-	spi_comm_start();
+    //start RGB LEDs
+//	spi_comm_start();
 
     systime_t time;
 
-    //Bool
+    //inDoor true if robot is in a gate, else false
     static bool inDoor=1;
     static uint8_t nb_leds=0;
 
 
-    //Informe l'utilisateur que la calibration des capteurs est en cours
+    //Visual signal that calibration is in progress
 
     for (int i=0; i<4; ++i) {
     	set_led(i,1);
@@ -38,6 +39,7 @@ static THD_FUNCTION(GateDetection, arg) {
 
     calibrate_ir();
 
+    //Choose shortest distance for calibration (see calibration procedure)
     uint16_t calibration=0;
     if (get_prox(2) > get_prox(5)) {
     	calibration=get_prox(2);
@@ -56,7 +58,7 @@ static THD_FUNCTION(GateDetection, arg) {
 
         time = chVTGetSystemTime();
 
-
+        //Robot is in a gate?
         if ((get_calibrated_prox(2)/calibration > 0) && (get_calibrated_prox(5)/calibration > 0)) {
         	if (inDoor==0) {
         		++nb_leds;
@@ -65,6 +67,7 @@ static THD_FUNCTION(GateDetection, arg) {
 
         	set_body_led(1);
 
+        	//FSM for the LEDs
             switch(nb_leds%6) {
             		case 0:
             			clear_leds();
@@ -96,7 +99,7 @@ static THD_FUNCTION(GateDetection, arg) {
         	inDoor=0;
         	set_body_led(0);
         }
-        //100Hz
+        //20Hz
         chThdSleepUntilWindowed(time, time + MS2ST(50));
     }
 
