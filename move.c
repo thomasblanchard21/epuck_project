@@ -82,6 +82,6 @@ static THD_FUNCTION(Move, arg) {
 }
 
 void move_start(void){
-	chThdCreateStatic(waMove, sizeof(waMove), NORMALPRIO, Move, NULL);
+	chThdCreateStatic(waMove, sizeof(waMove), NORMALPRIO+1, Move, NULL);
 }
 
