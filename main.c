@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
-
 #include <ch.h>
 #include <hal.h>
 #include <memory_protection.h>
@@ -11,14 +9,11 @@
 #include <motors.h>
 #include <camera/po8030.h>
 #include <chprintf.h>
-
 #include <msgbus/messagebus.h>
 #include <i2c_bus.h>
 #include <sensors/imu.h>
-
 #include <gate_detection.h>
 #include <move.h>
-#include <spi_comm.h>
 #include <leds.h>
 
 messagebus_t bus;
@@ -49,30 +44,31 @@ static void serial_start(void)
 int main(void)
 {
 
-    halInit();
+    //Multiple initialisations
+	halInit();
     chSysInit();
     mpu_init();
-
     //Starts the serial communication
     serial_start();
 
+    //Start the i2c communication
     i2c_start();
+
+    //Start the imu
     imu_start();
 
     /** Inits the Inter Process Communication bus. */
     messagebus_init(&bus, &bus_lock, &bus_condvar);
 
-	//inits the motors
+	//Inits the motors
 	motors_init();
-	spi_comm_start();
 
-
-    //wait 2 sec to be sure the e-puck is in a stable position
+	//Wait 2 sec to be sure the e-puck is in a stable position before calibrating
+	//the accelerometer while turning on the body led
 	set_body_led(1);
     chThdSleepMilliseconds(2000);
     calibrate_acc();
 	set_body_led(0);
-
 
 	//Inits the gate detection
 	gate_detection_start();
@@ -82,7 +78,6 @@ int main(void)
 
     /* Infinite loop. */
     while (1) {
-
 
     }
 }

@@ -1,12 +1,10 @@
 #include "ch.h"
 #include "hal.h"
-#include <math.h>
 #include <usbcfg.h>
 #include <chprintf.h>
-
-
 #include <main.h>
 #include <motors.h>
+#include <spi_comm.h>
 #include <gate_detection.h>
 #include <leds.h>
 #include <sensors/proximity.h>
@@ -17,41 +15,26 @@ static THD_FUNCTION(GateDetection, arg) {
     chRegSetThreadName(__FUNCTION__);
     (void)arg;
 
+    //Start the proximity sensors
     proximity_start();
 
-
-
-
-    set_rgb_led(LED2,100,0,0);
-    set_rgb_led(1,100,0,0);
-    set_rgb_led(2,100,0,0);
-    set_rgb_led(3,100,0,0);
-
+	spi_comm_start();
 
     systime_t time;
 
+    //Bool
     static bool inDoor=1;
     static uint8_t nb_leds=0;
 
 
     //Informe l'utilisateur que la calibration des capteurs est en cours
 
-     set_led(0,1);
-     chThdSleepMilliseconds(200);
-     set_rgb_led(LED2,100,0,0);
-     chThdSleepMilliseconds(200);
-     set_led(1,1);
-     chThdSleepMilliseconds(200);
-     set_rgb_led(LED4,100,0,0);
-     chThdSleepMilliseconds(200);
-     set_led(2,1);
-     chThdSleepMilliseconds(200);
-     set_rgb_led(LED6,100,0,0);
-     chThdSleepMilliseconds(200);
-     set_led(3,1);
-     chThdSleepMilliseconds(200);
-     set_rgb_led(LED8,100,0,0);
-     chThdSleepMilliseconds(200);
+    for (int i=0; i<4; ++i) {
+    	set_led(i,1);
+    	chThdSleepMilliseconds(100);
+//    	set_rgb_led(i,0,0,0);
+//    	chThdSleepMilliseconds(100);
+    }
 
     calibrate_ir();
 
@@ -63,10 +46,10 @@ static THD_FUNCTION(GateDetection, arg) {
     }
 
     for (int i=0; i<4; ++i) {
-         set_led(i,0);
-         chThdSleepMilliseconds(200);
-         set_rgb_led(i,0,0,0);
-         chThdSleepMilliseconds(200);
+    	set_led(i,0);
+    	chThdSleepMilliseconds(100);
+//    	set_rgb_led(i,0,0,0);
+//    	chThdSleepMilliseconds(100);
     }
 
     while(1){
@@ -113,10 +96,11 @@ static THD_FUNCTION(GateDetection, arg) {
         	inDoor=0;
         	set_body_led(0);
         }
+        //100Hz
+        chThdSleepUntilWindowed(time, time + MS2ST(50));
     }
 
-    //100Hz
-    chThdSleepUntilWindowed(time, time + MS2ST(10));
+
 }
 
 
